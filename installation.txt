@@ -1,3 +1,5 @@
+
+
 1. Установка symfony
  Linux/MacOs:
     curl -sS https://get.symfony.com/cli/installer | bash
