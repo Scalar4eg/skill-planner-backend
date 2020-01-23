@@ -27,3 +27,7 @@
 5. Запускаем миграцию
 
 `php bin/console doctrine:migrations:migrate`
+
+6. Запускаем веб-сервер symfony
+
+`symfony server:start`
