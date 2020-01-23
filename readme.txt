@@ -1,0 +1,48 @@
+Рассказываем про синтаксис PHP
+Рассказываем про MVC
+Рассказываем про Symfony, Doctrine
+Рассказываем про план на сегодня:
+установим симфони, докер, mysql, создадим контроллеры, сущности,
+напишем код который работает с БД, и читает/пишет наши точки/маршруты
+Показываем возможности PhpStorm, переименования, генерация
+
+
+1. Установка symfony
+ Linux/MacOs:
+    curl -sS https://get.symfony.com/cli/installer | bash
+ Windows:
+  Скачиваем https://get.symfony.com/cli/setup.exe
+
+Далее в консоли:
+
+2. Создаем проект
+symfony new skill_planner --full
+
+
+3. Устанавливаем Doctrine
+— composer require symfony/orm-pack
+— composer require --dev symfony/maker-bundle
+
+4. Запуск mysql в докер
+docker run -p 3306:3306 --rm --name skill-mysql -e MYSQL_ROOT_PASSWORD=skillpwd -d mysql:5.7
+
+5. Меняем конфигурацию в .env файле
+Меняем строчку
+DATABASE_URL=mysql://root:skillpwd@127.0.0.1:3306/skill_planner?serverVersion=5.7
+
+5. (ждем 10 секунд пока сервер запустится)
+Создаем базу в Doctrine:
+php bin/console doctrine:database:create
+
+6. Создаем 2х entity: PlannedTrip и TripPoint
+php bin/console make:entity (или вручную)
+
+7. Создаем миграцию
+php bin/console make:migration
+
+И запускаем ее
+php bin/console doctrine:migrations:migrate
+
+8. Интегирурем с фронтендом
+
+
