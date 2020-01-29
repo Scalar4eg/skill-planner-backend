@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Конструтор маршрутов</title>
+	<style type="text/css">
+	#columns {
+		display: flex;
+		justify-content: flex-start;
+	}
+	#tripInfo {
+		margin-left: 50px;
+	}
+	.tripPoint {
+		border: 1px solid gray;
+		padding: 5px;
+		margin-bottom: 5px;
+	}
+	#saveTripButton {
+		display: none;
+	}
+	</style>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script src="https://api-maps.yandex.ru/2.1/?apikey=07e3c75e-ac02-40e2-af96-203f7405300f&lang=ru_RU" type="text/javascript"></script>
+	<script>
+	ymaps.ready(init);
+    function init(){
+        // Создание карты.
+        window.myMap = new ymaps.Map("map", {
+            // Координаты центра карты.
+            // Порядок по умолчанию: «широта, долгота».
+            // Чтобы не определять координаты центра карты вручную,
+            // воспользуйтесь инструментом Определение координат.
+            center: [55.76, 37.64],
+            // Уровень масштабирования. Допустимые значения:
+            // от 0 (весь мир) до 19.
+            zoom: 8
+        });
+    }
+
+	$(function(){
+		$('#foundCityButton').on('click', function()
+		{
+			var cityName = $('#cityName').val();
+			
+			//Centering the map
+			var geoCoder = ymaps.geocode(cityName);
+			geoCoder.then(function(response)
+			{
+				var geoObject = response.geoObjects.get(0);
+				var coords = geoObject.geometry._coordinates;
+				window.myMap.setCenter(coords, 8);
+			});
+
+			//Taking POIs
+			$.get('https://search-maps.yandex.ru/v1/?apikey=1355b8b1-6de3-446c-93f1-ea1c8db4a614&results=100&lang=ru_RU&text=' + cityName + ' достопримечательности', function(response)
+			{
+				for(i in response.features)
+				{
+					var feature = response.features[i];
+					var coords = feature.geometry.coordinates.reverse();
+					var metaData = feature.properties.CompanyMetaData;
+					var point = new ymaps.Placemark(coords, {
+			            // Чтобы балун и хинт открывались на метке, необходимо задать ей определенные свойства.
+			            balloonContentHeader: metaData.name,
+			            balloonContentBody: metaData.address,
+			            balloonContentFooter: '<a href="#" class="addToTrip" data-name="' + metaData.name + '" data-address="' + metaData.address + '" data-lat="' + coords[0] + '" data-lng="' + coords[1] + '">Добавить в маршрут</a>',
+			            hintContent: metaData.name
+			        });
+			    	window.myMap.geoObjects.add(point);
+				}
+			})
+
+		});
+
+		$(document).on('click', '.addToTrip', function()
+		{
+			var pointData = $(this).data();
+			
+			var tripPoint = $('<div class="tripPoint">' + pointData.name + '</div>').data(pointData);
+			$('#tripContainer').append(tripPoint);
+
+			$('#saveTripButton').show();
+
+			return false;
+		});
+
+		$('#saveTripButton').on('click', function()
+		{
+			var today = new Date();
+			var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+			var tripData = {
+				'date': date,
+				'city' : $('#cityName').val(),
+				'points' : []
+			};
+			$('#tripContainer div').each(function()
+			{
+				tripData.points.push($(this).data());
+			});
+
+			$.post('/saveTrip/', tripData, function(response){
+				console.log(response);
+			});
+		});
+	});
+	</script>
+</head>
+<body>
+	<h1>Конструктор туристических маршрутов</h1>
+	<div id="columns">
+		<div>
+			<b>Введите название города:</b>
+			<input type="text" name="" id="cityName">
+			<input type="button" name="" id="foundCityButton" value="Найти">
+			<br><br><br>
+			<div id="map" style="width: 600px; height: 400px"></div>
+		</div>
+		<div id="tripInfo">
+			<h2>Текущий маршрут</h2>
+			<div id="tripContainer"></div>
+			<br>
+			<button id="saveTripButton">Сохранить маршрут</button>
+		</div>
+	</div>
+</body>
+</html>

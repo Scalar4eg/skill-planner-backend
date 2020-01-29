@@ -26,7 +26,7 @@ class TripPoint
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $category;
+    private $address;
 
     /**
      * @ORM\Column(type="float")
@@ -61,14 +61,14 @@ class TripPoint
         return $this;
     }
 
-    public function getCategory(): ?string
+    public function getAddress(): ?string
     {
-        return $this->category;
+        return $this->address;
     }
 
-    public function setCategory(string $category): self
+    public function setAddress(string $address): self
     {
-        $this->category = $category;
+        $this->address = $address;
 
         return $this;
     }
@@ -112,7 +112,7 @@ class TripPoint
     public function toArray() {
         return [
             "name" => $this->name,
-            "category" => $this->category,
+            "address" => $this->address,
             "lat" => $this->lat,
             "lng" => $this->lng,
         ];

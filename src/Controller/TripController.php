@@ -57,7 +57,7 @@ class TripController extends AbstractController
             ->setLat($point_data['lat'])
             ->setLng($point_data['lng'])
             ->setName($point_data['name'])
-            ->setCategory($point_data['category']);
+            ->setAddress($point_data['address']);
         return $tripPoint;
     }
 
@@ -86,7 +86,6 @@ class TripController extends AbstractController
     public function updateTrip(Request $request, EntityManagerInterface $em, PlannedTrip $trip): void
     {
         // Установим параметры путешествия
-        $trip->setName($request->get("name"));
         $trip->setCity($request->get("city"));
         $trip->setDate($request->get("date"));
 
