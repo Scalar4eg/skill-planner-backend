@@ -21,11 +21,6 @@ class PlannedTrip
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $name;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
     private $date;
 
     /**
@@ -47,18 +42,6 @@ class PlannedTrip
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): self
-    {
-        $this->name = $name;
-
-        return $this;
     }
 
     public function getDate(): ?string
@@ -119,7 +102,6 @@ class PlannedTrip
         }
         return [
             "id" => $this->id,
-            "name" => $this->name,
             "date" => $this->date,
             "city" => $this->city,
             "points" => $points,
